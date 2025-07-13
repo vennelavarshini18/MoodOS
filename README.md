@@ -80,6 +80,8 @@ By [Vennela Varshini Anasoori](https://github.com/vennelavarshini18)
 
 MoodOS is a work in progress —  it's being actively optimizing the model for **greater emotional accuracy**, **robustness across diverse voices**, and **real-time performance**.
 
+---
+
 ## 🤝 Contributions Welcome
 
 If you're passionate about **speech emotion recognition**, **deep learning**, or **audio processing**, and have ideas to improve the model or the app, feel free to fork the repo and submit a pull request.
