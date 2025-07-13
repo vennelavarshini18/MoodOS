@@ -1,0 +1,11 @@
+# requirements.txt
+streamlit
+sounddevice
+scipy
+numpy
+matplotlib
+librosa
+tensorflow
+pandas
+torch
+transformers
