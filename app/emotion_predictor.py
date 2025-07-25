@@ -1,27 +1,39 @@
 import numpy as np
 import librosa
 import tensorflow as tf
+import logging
 import os
+import transformers
+from transformers import Wav2Vec2Processor, Wav2Vec2Model
+import torch
+import torchaudio
+
+logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "..", "model", "best_model.h5")
-
-label_classes = ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad']
+MODEL_PATH = os.path.join(BASE_DIR, "..", "model", "wav2vec_classifier3.keras")
+LABEL_PATH = os.path.join(BASE_DIR, "..", "model", "label_classes3.npy")
 
 model = tf.keras.models.load_model(MODEL_PATH)
+label_classes = np.load(LABEL_PATH)
 
-def extract_features(file_path, max_len=173):
-    audio, sample_rate = librosa.load(file_path, res_type='kaiser_fast')
-    mfccs = librosa.feature.mfcc(y=audio, sr=sample_rate, n_mfcc=40)
-    pad_width = max_len - mfccs.shape[1]
-    if pad_width > 0:
-        mfccs = np.pad(mfccs, pad_width=((0, 0), (0, pad_width)), mode='constant')
-    else:
-        mfccs = mfccs[:, :max_len]
-    return mfccs.T[np.newaxis, ...]
+processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base")
+wav2vec = Wav2Vec2Model.from_pretrained("facebook/wav2vec2-base")
+
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+wav2vec = wav2vec.to(DEVICE)
+
+def extract_wav2vec_features(file_path):
+    waveform, sr = torchaudio.load(file_path)
+    waveform = waveform.squeeze(0)
+    inputs = processor(waveform, sampling_rate=sr, return_tensors="pt", padding=True)
+    with torch.no_grad():
+        embeddings = wav2vec(**inputs.to(DEVICE)).last_hidden_state.mean(dim=1)  
+
+    return embeddings.cpu().numpy()
 
 def predict_emotion(file_path):
-    features = extract_features(file_path)
+    features = extract_wav2vec_features(file_path)
     prediction = model.predict(features, verbose=0)[0]
     emotion = label_classes[np.argmax(prediction)]
 

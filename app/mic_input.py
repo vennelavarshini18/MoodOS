@@ -7,7 +7,7 @@ import soundfile as sf
 import librosa
 import streamlit as st
 
-def record_audio(duration=2, fs=16000, output_dir="audio"):
+def record_audio(duration=3, fs=16000, output_dir="audio"):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
