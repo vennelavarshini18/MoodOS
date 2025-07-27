@@ -3,37 +3,84 @@ import librosa
 import tensorflow as tf
 import logging
 import os
-import transformers
-from transformers import Wav2Vec2Processor, Wav2Vec2Model
-import torch
-import torchaudio
 
 logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
 
+# === Paths ===
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "..", "model", "wav2vec_classifier3.keras")
-LABEL_PATH = os.path.join(BASE_DIR, "..", "model", "label_classes3.npy")
+MODEL_PATH = os.path.join(BASE_DIR, "..", "model", "best_model.h5")
+LABEL_PATH = os.path.join(BASE_DIR, "..", "model", "label_classes.npy")
 
-model = tf.keras.models.load_model(MODEL_PATH)
-label_classes = np.load(LABEL_PATH)
+# === Load Model and Labels ===
+model = tf.keras.models.Sequential([
+    tf.keras.layers.Conv1D(512, kernel_size=5, strides=1, padding='same', activation='relu', input_shape=(2376, 1)),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.MaxPooling1D(pool_size=5, strides=2, padding='same'),
 
-processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base")
-wav2vec = Wav2Vec2Model.from_pretrained("facebook/wav2vec2-base")
+    tf.keras.layers.Conv1D(512, kernel_size=5, strides=1, padding='same', activation='relu'),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.MaxPooling1D(pool_size=5, strides=2, padding='same'),
+    tf.keras.layers.Dropout(0.2),
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-wav2vec = wav2vec.to(DEVICE)
+    tf.keras.layers.Conv1D(256, kernel_size=5, strides=1, padding='same', activation='relu'),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.MaxPooling1D(pool_size=5, strides=2, padding='same'),
 
-def extract_wav2vec_features(file_path):
-    waveform, sr = torchaudio.load(file_path)
-    waveform = waveform.squeeze(0)
-    inputs = processor(waveform, sampling_rate=sr, return_tensors="pt", padding=True)
-    with torch.no_grad():
-        embeddings = wav2vec(**inputs.to(DEVICE)).last_hidden_state.mean(dim=1)  
+    tf.keras.layers.Conv1D(256, kernel_size=3, strides=1, padding='same', activation='relu'),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.MaxPooling1D(pool_size=5, strides=2, padding='same'),
+    tf.keras.layers.Dropout(0.2),
 
-    return embeddings.cpu().numpy()
+    tf.keras.layers.Conv1D(128, kernel_size=3, strides=1, padding='same', activation='relu'),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.MaxPooling1D(pool_size=3, strides=2, padding='same'),
+    tf.keras.layers.Dropout(0.2),
 
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(512, activation='relu'),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Dense(6, activation='softmax')
+])
+
+model.load_weights(MODEL_PATH)
+label_classes = np.load(LABEL_PATH, allow_pickle=True)
+
+# === Feature Extraction ===
+def zcr(data, frame_length=2048, hop_length=512):
+    return np.squeeze(librosa.feature.zero_crossing_rate(data, frame_length=frame_length, hop_length=hop_length))
+
+def rmse(data, frame_length=2048, hop_length=512):
+    return np.squeeze(librosa.feature.rms(y=data, frame_length=frame_length, hop_length=hop_length))
+
+def mfcc(data, sr, flatten=True):
+    mfccs = librosa.feature.mfcc(y=data, sr=sr, n_mfcc=30)
+    return np.ravel(mfccs.T) if flatten else np.squeeze(mfccs.T)
+
+def extract_features(data, sr=22050, max_len=2376):
+    result = np.hstack((
+        zcr(data),
+        rmse(data),
+        mfcc(data, sr)
+    ))
+
+    # === Ensure feature vector is exactly 2376 ===
+    if len(result) > max_len:
+        result = result[:max_len]
+    elif len(result) < max_len:
+        result = np.pad(result, (0, max_len - len(result)))
+
+    return result
+
+def get_features(path, duration=2.5, offset=0.6):
+    data, sr = librosa.load(path, duration=duration, offset=offset)
+    return extract_features(data, sr)
+
+# === Prediction Function ===
 def predict_emotion(file_path):
-    features = extract_wav2vec_features(file_path)
+    features = get_features(file_path)
+    features = np.expand_dims(features, axis=0)  # add batch dimension
+    features = np.expand_dims(features, axis=2)  # add channel dimension
+
     prediction = model.predict(features, verbose=0)[0]
     emotion = label_classes[np.argmax(prediction)]
 
