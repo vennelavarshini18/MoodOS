@@ -6,12 +6,10 @@ import os
 
 logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
 
-# === Paths ===
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "..", "model", "best_model.h5")
 LABEL_PATH = os.path.join(BASE_DIR, "..", "model", "label_classes.npy")
 
-# === Load Model and Labels ===
 model = tf.keras.models.Sequential([
     tf.keras.layers.Conv1D(512, kernel_size=5, strides=1, padding='same', activation='relu', input_shape=(2376, 1)),
     tf.keras.layers.BatchNormalization(),
@@ -45,7 +43,6 @@ model = tf.keras.models.Sequential([
 model.load_weights(MODEL_PATH)
 label_classes = np.load(LABEL_PATH, allow_pickle=True)
 
-# === Feature Extraction ===
 def zcr(data, frame_length=2048, hop_length=512):
     return np.squeeze(librosa.feature.zero_crossing_rate(data, frame_length=frame_length, hop_length=hop_length))
 
@@ -63,7 +60,6 @@ def extract_features(data, sr=22050, max_len=2376):
         mfcc(data, sr)
     ))
 
-    # === Ensure feature vector is exactly 2376 ===
     if len(result) > max_len:
         result = result[:max_len]
     elif len(result) < max_len:
@@ -75,11 +71,10 @@ def get_features(path, duration=2.5, offset=0.6):
     data, sr = librosa.load(path, duration=duration, offset=offset)
     return extract_features(data, sr)
 
-# === Prediction Function ===
 def predict_emotion(file_path):
     features = get_features(file_path)
-    features = np.expand_dims(features, axis=0)  # add batch dimension
-    features = np.expand_dims(features, axis=2)  # add channel dimension
+    features = np.expand_dims(features, axis=0)  
+    features = np.expand_dims(features, axis=2) 
 
     prediction = model.predict(features, verbose=0)[0]
     emotion = label_classes[np.argmax(prediction)]

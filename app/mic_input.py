@@ -19,7 +19,6 @@ def record_audio(duration=4, fs=16000, output_dir="audio"):
         sd.wait()
         recording = recording.squeeze()
 
-        # Normalize audio to -1 to 1
         max_val = np.max(np.abs(recording))
         if max_val > 0:
             recording = recording / max_val
