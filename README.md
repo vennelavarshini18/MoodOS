@@ -96,7 +96,7 @@ MoodOS is evolving with the following goals in mind:
 -  **Continual learning from user feedback**
 -  **Enhanced visualizations and UX improvements**
 -  **Longitudinal analysis of mood patterns**
-- ☁ **Cloud storage & analytics for enterprise use**
+-  **Cloud storage & analytics for enterprise use**
 
 ---
 
@@ -104,5 +104,5 @@ MoodOS is evolving with the following goals in mind:
 
 If you're into **audio emotion detection**, **deep learning**, or **mental health tech**, feel free to fork and contribute!
 
-> Let’s make MoodOS even smarter — together.
+> 💡 Let’s make MoodOS even smarter — together.
 
