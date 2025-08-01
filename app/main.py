@@ -2,6 +2,7 @@ import streamlit as st
 import uuid
 import sys
 import os
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from mic_input import record_audio
 from emotion_predictor import predict_emotion  
@@ -9,6 +10,7 @@ from plot import show_confidence_chart, show_waveform
 from journal import save_to_journal, show_journal
 
 st.set_page_config(page_title="🎙️ Track your mood", layout="centered")
+
 st.markdown("""
     <h1 style='text-align: center;'>🎧 MoodOS</h1>
     <p style='text-align: center;'>Your operating system for emotional clarity, powered by deep learning.</p>
@@ -49,27 +51,34 @@ if option == "Upload Audio":
 
 elif option == "Record Mic":
     st.markdown("### 🎤 Record from Microphone")
-    if st.button("Start Recording"):
-        file_path = record_audio()
-        st.audio(file_path, format="audio/wav")
-        show_waveform(file_path)
 
-        emotion, prediction = predict_emotion(file_path)
+    try:
+        if st.button("Start Recording"):
+            file_path = record_audio()
+            if file_path:
+                st.audio(file_path, format="audio/wav")
+                show_waveform(file_path)
 
-        st.text("Raw prediction vector:")
-        st.json(prediction)
+                emotion, prediction = predict_emotion(file_path)
 
-        st.markdown("### 🧠 Detected Emotion: **<span style='color:#3c82f6;'>{}</span>**".format(emotion.upper()), unsafe_allow_html=True)
+                st.text("Raw prediction vector:")
+                st.json(prediction)
 
-        with st.expander("💡 Click for personalized suggestions", expanded=True):
-            from utils.suggestions import emotion_reactions
-            for idea in emotion_reactions.get(emotion.lower(), ["💪 Stay strong and take care of yourself."]):
-                st.markdown(f"- {idea}")
+                st.markdown("### 🧠 Detected Emotion: **<span style='color:#3c82f6;'>{}</span>**".format(emotion.upper()), unsafe_allow_html=True)
 
-        st.markdown("### 📊 Emotion Probabilities")
-        show_confidence_chart(prediction)
+                with st.expander("💡 Click for personalized suggestions", expanded=True):
+                    from utils.suggestions import emotion_reactions
+                    for idea in emotion_reactions.get(emotion.lower(), ["💪 Stay strong and take care of yourself."]):
+                        st.markdown(f"- {idea}")
 
-        save_to_journal(emotion, prediction)
+                st.markdown("### 📊 Emotion Probabilities")
+                show_confidence_chart(prediction)
+
+                save_to_journal(emotion, prediction)
+            else:
+                st.info("🎙️ Microphone recording is not available in this environment. Try uploading a `.wav` file instead.")
+    except Exception as e:
+        st.error(f"Microphone feature not available: {e}")
 
 elif option == "View Journal":
     show_journal()
