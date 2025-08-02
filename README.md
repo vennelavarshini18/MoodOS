@@ -96,7 +96,6 @@ Developed by [Vennela Varshini Anasoori](https://github.com/vennelavarshini18)
 
 MoodOS is evolving with the following goals in mind:
 
--  **Multilingual emotion detection**
 -  **Integration with an emotional AI chatbot**
 -  **Continual learning from user feedback**
 -  **Enhanced visualizations and UX improvements**
