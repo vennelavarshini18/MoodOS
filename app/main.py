@@ -5,24 +5,6 @@ import streamlit as st
 
 st.set_page_config(page_title="🎙️ Track your mood", layout="wide")
 
-css_paths = [
-    os.path.join(os.path.dirname(__file__), ".streamlit", "style.css"),
-    ".streamlit/style.css"
-]
-
-css_loaded = False
-for p in css_paths:
-    if os.path.exists(p):
-        try:
-            with open(p, "r", encoding="utf-8") as f:
-                st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-            css_loaded = True
-            break
-        except Exception as e:
-            st.warning(f"Failed to load CSS from {p}: {e}")
-if not css_loaded:
-    st.warning("Could not find .streamlit/style.css — create it as shown in the instructions.")
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from mic_input import record_audio
@@ -31,64 +13,104 @@ from plot import show_confidence_chart, show_waveform
 from journal import save_to_journal, show_journal
 
 theme = st.get_option("theme.base") or "light"
+accent = "#06B6D4" if theme == "light" else "#22d3ee"
 
-accent = "#06B6D4" 
-
-st.markdown("""
+st.markdown(f"""
     <style>
-      .hero-container {
+      /* Global App Background */
+      .stApp {{
         background: linear-gradient(
-            135deg,
-            rgba(6,182,212,0.10),  /* lighter teal */
-            rgba(30,64,175,0.10)   /* lighter blue */
+          135deg,
+          #d0f4ff 0%,
+          #a0e8ff 25%,
+          #80dfff 50%,
+          #a0e8ff 75%,
+          #d0f4ff 100%
         );
-        padding: 2.8rem;
+        background-attachment: fixed;
+        background-size: cover;
+      }}
+
+      /* Hero Section */
+      .hero-container {{
+        background: linear-gradient(135deg, rgba(10,162,212,0.10), rgba(30,64,175,0.10));
+        padding: 3rem;
         border-radius: 1.5rem;
         text-align: center;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-        max-width: 850px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        max-width: 2200px;
+    
         margin: auto;
         border: 1px solid rgba(255,255,255,0.12);
-        backdrop-filter: blur(5px);
-    }
-        .hero-title {
-            font-size: 3.4em;
-            font-weight: 900;
-            background: linear-gradient(90deg, #06B6D4, #3B82F6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.4rem;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.25);
-        }
-        .hero-subtitle {
-            font-size: 1.2em;
-            font-weight: 400;
-            color: rgba(255,255,255,0.95);
-            line-height: 1.6;
-        }
-      .stApp {
-            background: linear-gradient(
-                135deg,
-                #d0f4ff 0%,
-                #a0e8ff 25%,
-                #80dfff 50%,
-                #a0e8ff 75%,
-                #d0f4ff 100%
-            );
-            background-attachment: fixed;
-            background-size: cover;
-        }
+        backdrop-filter: blur(6px);
+         margin-bottom: 2rem;
+      }}
+      .hero-image {{
+        width: 60%;
+        max-width: 80px;
+        height: auto;
+        margin-bottom: 1.8rem;
+        border-radius: 1rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      }}
+      .hero-title {{
+        font-size: 6.5em;
+        font-weight: 900;
+        background: linear-gradient(90deg, #06B6D4, #3B82F6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.8rem;
+        text-shadow: 0 3px 10px rgba(0,0,0,0.3);
+      }}
+      .hero-subtitle {{
+        font-size: 1.5em;
+        font-weight: 500;
+        color: {"#000" if theme == "light" else "#fff"};
+        line-height: 1.8;
+        padding: 0 1rem;
+      }}
+
+      /* Nav Tabs Styling */
+      .stTabs [data-baseweb="tab"] {{
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 0.75rem 0.75rem 0 0;
+        padding: 0.6rem 1.2rem;
+        margin-right: 0.4rem;
+        font-weight: 600;
+        color: #444;
+        transition: all 0.3s ease-in-out;
+      }}
+      .stTabs [aria-selected="true"] {{
+        background-color: {accent};
+        color: white;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      }}
+      .stTabs [data-baseweb="tab"]:hover {{
+        background-color: rgba(0,0,0,0.08);
+      }}
     </style>
+""", unsafe_allow_html=True)
+
+header_image_path = os.path.join("static", "header_image.png")
+if os.path.exists(header_image_path):
+    with open(header_image_path, "rb") as img_file:
+        import base64
+        encoded_img = base64.b64encode(img_file.read()).decode()
+    img_html = f"<img src='data:image/png;base64,{encoded_img}' class='hero-image' alt='MoodOS Banner'>"
+else:
+    img_html = "<div class='hero-image'>[Header image missing]</div>"
+
+st.markdown(f"""
     <div class="hero-container">
-        <h1 class="hero-title">🎧 MoodOS</h1>
+        <div class="hero-title">🎧 MoodOS</div>
+        {img_html}
         <p class="hero-subtitle">
-            Your operating system for emotional clarity,<br>
-            powered by deep learning.
+            Step into a world where your voice speaks louder than words.<br>
+            MoodOS is your emotional mirror, powered by deep learning to help you<br>
+            understand, reflect, and grow — one emotion at a time.
         </p>
     </div>
 """, unsafe_allow_html=True)
-
-
 
 tabs = st.tabs(["🎵 Upload Audio", "🎤 Record Mic", "📖 View Journal"])
 
@@ -108,12 +130,13 @@ with tabs[0]:
         st.audio(audio_path, format="audio/wav")
         show_waveform(audio_path)
 
-
         emotion, prediction = predict_emotion(audio_path)
 
         st.success(f"✅ Emotion Detected: {emotion.upper()}")
-
-        st.markdown(f"### 🧠 Detected Emotion: <span style='color:{accent}; font-weight:bold;'>{emotion.upper()}</span>", unsafe_allow_html=True)
+        st.markdown(
+            f"### 🧠 Detected Emotion: <span style='color:{accent}; font-weight:bold;'>{emotion.upper()}</span>",
+            unsafe_allow_html=True
+        )
 
         with st.expander("💡 Click for personalized suggestions", expanded=True):
             from utils.suggestions import emotion_reactions
@@ -122,7 +145,6 @@ with tabs[0]:
 
         st.markdown("### 📊 Emotion Probabilities")
         show_confidence_chart(prediction)
-
         save_to_journal(emotion, prediction)
 
 with tabs[1]:
@@ -135,8 +157,10 @@ with tabs[1]:
         emotion, prediction = predict_emotion(file_path)
 
         st.success(f"✅ Emotion Detected: {emotion.upper()}")
-
-        st.markdown(f"### 🧠 Detected Emotion: <span style='color:{accent}; font-weight:bold;'>{emotion.upper()}</span>", unsafe_allow_html=True)
+        st.markdown(
+            f"### 🧠 Detected Emotion: <span style='color:{accent}; font-weight:bold;'>{emotion.upper()}</span>",
+            unsafe_allow_html=True
+        )
 
         with st.expander("💡 Click for personalized suggestions", expanded=True):
             from utils.suggestions import emotion_reactions
@@ -145,8 +169,7 @@ with tabs[1]:
 
         st.markdown("### 📊 Emotion Probabilities")
         show_confidence_chart(prediction)
-
         save_to_journal(emotion, prediction)
 
 with tabs[2]:
-    show_journal()
+    show_journal()      
