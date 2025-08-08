@@ -35,7 +35,7 @@ It detects the following emotions:
 
 ---
 
-## App Screenshots
+## App Interface
 
 Here’s a sneak peek into the MoodOS interface:
 
