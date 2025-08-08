@@ -35,19 +35,6 @@ It detects the following emotions:
 
 ---
 
-## App Interface
-
-Here’s a sneak peek into the MoodOS interface:
-
-> https://drive.google.com/file/d/1vKxsZ_m1jYFnsWsRy6CGAJPg_pXPX7xG/view?usp=sharing
-
--  Real-time Recording Page  
--  Emotion Confidence Chart  
--  Mood Journal Logs  
--  Personalized Suggestion Cards  
-
----
-
 ## Live Demo
 
 > Find here : https://trackyourmood.onrender.com  (wait for few minutes to load)
