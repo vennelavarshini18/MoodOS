@@ -90,11 +90,8 @@ st.markdown("""
 
 
 
-
-# 7) Tabs + app body
 tabs = st.tabs(["🎵 Upload Audio", "🎤 Record Mic", "📖 View Journal"])
 
-# ========== Upload Audio ==========
 with tabs[0]:
     st.markdown("### 🎵 Upload a WAV file to begin:")
     uploaded_file = st.file_uploader("Upload your speech sample", type=["wav"], label_visibility="collapsed")
@@ -128,7 +125,6 @@ with tabs[0]:
 
         save_to_journal(emotion, prediction)
 
-# ========== Record Mic ==========
 with tabs[1]:
     st.markdown("### 🎤 Record from Microphone")
     if st.button("Start Recording"):
@@ -152,6 +148,5 @@ with tabs[1]:
 
         save_to_journal(emotion, prediction)
 
-# ========== View Journal ==========
 with tabs[2]:
     show_journal()
