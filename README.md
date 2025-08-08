@@ -38,12 +38,17 @@ It detects the following emotions:
 ## App Screenshots
 
 Here’s a sneak peek into the MoodOS interface:
-<img width="1048" height="873" alt="Screenshot 2025-07-27 165323" src="https://github.com/user-attachments/assets/02d28145-d47e-4e96-b308-81fa6e0f20a1" />    
-<img width="1031" height="836" alt="Screenshot 2025-07-27 165340" src="https://github.com/user-attachments/assets/4f8179ee-6b17-4d7d-a603-c1604bc7e3d9" />
+<img width="1918" height="906" alt="Screenshot 2025-08-08 134239" src="https://github.com/user-attachments/assets/20fceef2-5427-4c1e-9301-4ae18644ccf9" />
 
+<img width="1910" height="900" alt="Screenshot 2025-08-08 134252" src="https://github.com/user-attachments/assets/08f46eec-b3da-4773-b945-3ccee605fb8a" />
+
+<img width="1911" height="902" alt="Screenshot 2025-08-08 134308" src="https://github.com/user-attachments/assets/4ecbc3c8-f0ec-4bd0-a0cd-8e292817816a" />
+
+<img width="1913" height="908" alt="Screenshot 2025-08-08 134346" src="https://github.com/user-attachments/assets/96238a74-8310-4a83-8496-c77a5a1890ac" />
 
 ### Journal section:
-<img width="1847" height="890" alt="Screenshot 2025-07-27 172451" src="https://github.com/user-attachments/assets/83567a67-1a8f-400c-8ce3-4a0e69749787" />
+
+<img width="1911" height="919" alt="Screenshot 2025-08-08 135556" src="https://github.com/user-attachments/assets/ed5b209d-edf3-40dd-96ef-9e5d073d2289" />
 
 
 -  Real-time Recording Page  
