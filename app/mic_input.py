@@ -1,13 +1,22 @@
-import sounddevice as sd
-from scipy.io.wavfile import write
-import numpy as np
 import os
 import datetime
-import soundfile as sf
-import librosa
+import numpy as np
 import streamlit as st
 
+try:
+    import sounddevice as sd
+    from scipy.io.wavfile import write
+    import soundfile as sf
+    MIC_AVAILABLE = True
+except Exception as e:
+    MIC_AVAILABLE = False
+    st.warning("🎙️ Microphone recording is not supported in this environment (e.g., Render).")
+
 def record_audio(duration=4, fs=16000, output_dir="audio"):
+    if not MIC_AVAILABLE:
+        st.error("Microphone recording is disabled in this environment.")
+        return None
+
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 

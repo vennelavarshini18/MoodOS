@@ -6,6 +6,7 @@ numpy
 matplotlib
 librosa
 tensorflow
+plotly
 pandas
 torch
 transformers

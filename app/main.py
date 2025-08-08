@@ -1,5 +1,6 @@
 # main.py
 import os
+<<<<<<< HEAD
 import sys
 import uuid
 import streamlit as st
@@ -28,6 +29,9 @@ if not css_loaded:
     st.warning("Could not find .streamlit/style.css — create it as shown in the instructions.")
 
 # 3) Add project path so local imports work
+=======
+
+>>>>>>> 9b1d091c3a4408c968e85b98da94acdff3c3de6e
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # 4) Import app logic (after CSS injection)
@@ -36,12 +40,17 @@ from emotion_predictor import predict_emotion
 from plot import show_confidence_chart, show_waveform
 from journal import save_to_journal, show_journal
 
+<<<<<<< HEAD
 # 5) Theme detection + accent
 theme = st.get_option("theme.base") or "light"
 
 accent = "#06B6D4"  # turquoise (same for both light/dark to preserve brand)
 
 # Hero Header
+=======
+st.set_page_config(page_title="🎙️ Track your mood", layout="centered")
+
+>>>>>>> 9b1d091c3a4408c968e85b98da94acdff3c3de6e
 st.markdown("""
     <style>
       .hero-container {
@@ -139,27 +148,45 @@ with tabs[0]:
 # ========== Record Mic ==========
 with tabs[1]:
     st.markdown("### 🎤 Record from Microphone")
-    if st.button("Start Recording"):
-        file_path = record_audio()
-        st.audio(file_path, format="audio/wav")
-        show_waveform(file_path)
 
-        emotion, prediction = predict_emotion(file_path)
+    try:
+        if st.button("Start Recording"):
+            file_path = record_audio()
+            if file_path:
+                st.audio(file_path, format="audio/wav")
+                show_waveform(file_path)
 
+<<<<<<< HEAD
         st.success(f"✅ Emotion Detected: {emotion.upper()}")
 
         st.markdown(f"### 🧠 Detected Emotion: <span style='color:{accent}; font-weight:bold;'>{emotion.upper()}</span>", unsafe_allow_html=True)
+=======
+                emotion, prediction = predict_emotion(file_path)
 
-        with st.expander("💡 Click for personalized suggestions", expanded=True):
-            from utils.suggestions import emotion_reactions
-            for idea in emotion_reactions.get(emotion.lower(), ["💪 Stay strong and take care of yourself."]):
-                st.markdown(f"- {idea}")
+                st.text("Raw prediction vector:")
+                st.json(prediction)
+>>>>>>> 9b1d091c3a4408c968e85b98da94acdff3c3de6e
 
-        st.markdown("### 📊 Emotion Probabilities")
-        show_confidence_chart(prediction)
+                st.markdown("### 🧠 Detected Emotion: **<span style='color:#3c82f6;'>{}</span>**".format(emotion.upper()), unsafe_allow_html=True)
 
-        save_to_journal(emotion, prediction)
+                with st.expander("💡 Click for personalized suggestions", expanded=True):
+                    from utils.suggestions import emotion_reactions
+                    for idea in emotion_reactions.get(emotion.lower(), ["💪 Stay strong and take care of yourself."]):
+                        st.markdown(f"- {idea}")
 
+                st.markdown("### 📊 Emotion Probabilities")
+                show_confidence_chart(prediction)
+
+                save_to_journal(emotion, prediction)
+            else:
+                st.info("🎙️ Microphone recording is not available in this environment. Try uploading a `.wav` file instead.")
+    except Exception as e:
+        st.error(f"Microphone feature not available: {e}")
+
+<<<<<<< HEAD
 # ========== View Journal ==========
 with tabs[2]:
+=======
+elif option == "View Journal":
+>>>>>>> 9b1d091c3a4408c968e85b98da94acdff3c3de6e
     show_journal()
