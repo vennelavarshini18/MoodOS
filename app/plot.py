@@ -15,15 +15,13 @@ def show_waveform(file_path):
         waveform = np.frombuffer(signal, dtype=np.int16)
         time = np.linspace(0, len(waveform) / framerate, num=len(waveform))
 
-    # Plot
-    fig, ax = plt.subplots(figsize=(6, 3))  # control plot size here
+    fig, ax = plt.subplots(figsize=(6, 3))  
     ax.plot(time, waveform, linewidth=0.5)
     ax.set_xlabel("Time (s)")
     ax.set_ylabel("Amplitude")
     ax.set_title("Audio Waveform")
     ax.grid(True)
 
-    # Centered layout using columns
     left, center, right = st.columns([1, 2.5, 1])
     with center:
         st.markdown(
@@ -36,7 +34,6 @@ def show_waveform(file_path):
         st.pyplot(fig)
         st.markdown("</div>", unsafe_allow_html=True)
 
-# Optional: consistent colors for known emotions
 emotion_colors = {
     "angry": "#FF4C4C",
     "disgust": "#6B8E23",
