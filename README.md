@@ -38,18 +38,8 @@ It detects the following emotions:
 ## App Screenshots
 
 Here’s a sneak peek into the MoodOS interface:
-<img width="1918" height="906" alt="Screenshot 2025-08-08 134239" src="https://github.com/user-attachments/assets/20fceef2-5427-4c1e-9301-4ae18644ccf9" />
 
-<img width="1910" height="900" alt="Screenshot 2025-08-08 134252" src="https://github.com/user-attachments/assets/08f46eec-b3da-4773-b945-3ccee605fb8a" />
-
-<img width="1911" height="902" alt="Screenshot 2025-08-08 134308" src="https://github.com/user-attachments/assets/4ecbc3c8-f0ec-4bd0-a0cd-8e292817816a" />
-
-<img width="1913" height="908" alt="Screenshot 2025-08-08 134346" src="https://github.com/user-attachments/assets/96238a74-8310-4a83-8496-c77a5a1890ac" />
-
-### Journal section:
-
-<img width="1911" height="919" alt="Screenshot 2025-08-08 135556" src="https://github.com/user-attachments/assets/ed5b209d-edf3-40dd-96ef-9e5d073d2289" />
-
+> https://drive.google.com/file/d/1vKxsZ_m1jYFnsWsRy6CGAJPg_pXPX7xG/view?usp=sharing
 
 -  Real-time Recording Page  
 -  Emotion Confidence Chart  
