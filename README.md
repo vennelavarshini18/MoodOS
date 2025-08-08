@@ -60,7 +60,7 @@ Here’s a sneak peek into the MoodOS interface:
 
 ## Live Demo
 
-> Find here : https://trackyourmood.onrender.com
+> Find here : https://trackyourmood.onrender.com  (wait for few minutes to load)
 --- 
 
 ## Why Use MoodOS?
