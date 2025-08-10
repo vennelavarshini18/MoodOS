@@ -1,6 +1,6 @@
 # 🎧 MoodOS: Your Emotional Operating System
 
-**MoodOS** is a deep learning–powered web application that detects your **inner emotional state** from your **voice** — either through uploading `.wav` files or recording in real-time.
+**MoodOS** is a deep learning–powered web application that detects your **inner emotional state** from your **voice** — either through uploading .wav files or recording in real-time — and also features an **emotion-aware chatbot** along with a **mood-tracking journal** for **personalized mental wellness support**.
 
 Unlike traditional NLP-based sentiment models, **MoodOS is sentence-agnostic** — it listens to **tone, pitch, rhythm, and frequency** patterns rather than the words you say.
 
@@ -34,17 +34,18 @@ It detects the following emotions:
 
 > `Happy, Sad, Angry, Fearful, Neutral, Disgust`
 
-Then the system not only visualizes prediction probabilities with dynamic charts but also offers personalized suggestions—like uplifting activities or calming techniques—tailored to the user’s current mood. 
+Then the system not only visualizes prediction probabilities with dynamic charts but also offers personalized suggestions—like **uplifting activities or calming techniques**—tailored to the user’s current mood. 
 
-All interactions are securely logged into a built-in mood journal, enabling users to track emotional patterns over time.
+All interactions are securely logged into a **built-in mood journal**, enabling users to **track emotional patterns** over time.
 
-There's also a chatbot that keeps conversation memory using st.session_state so it remembers previous interactions in the ongoing chat and understands emotional tone from the conversation history and adapts its replies (e.g., more compassionate if sadness is detected).
+There's also a chatbot that **keeps conversation memory** so it remembers previous interactions in the ongoing chat and **understands emotional tone** from the conversation history and adapts its replies (e.g., more compassionate if sadness is detected).
 
 ---
 
 ## Live Demo
 
 > Find here : https://trackyourmood.onrender.com  (wait for few minutes to load)
+
 > Demo video : https://drive.google.com/file/d/1ow1KIWIiqMHQIy5jEuyA1xRvyxLcmsvJ/view?usp=sharing
 
 --- 
