@@ -1,7 +1,9 @@
 import os
 import sys
 import uuid
+import base64
 import streamlit as st
+import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="🎙️ Track your mood", layout="wide")
 
@@ -17,21 +19,11 @@ accent = "#06B6D4" if theme == "light" else "#22d3ee"
 
 st.markdown(f"""
     <style>
-      /* Global App Background */
       .stApp {{
-        background: linear-gradient(
-          135deg,
-          #d0f4ff 0%,
-          #a0e8ff 25%,
-          #80dfff 50%,
-          #a0e8ff 75%,
-          #d0f4ff 100%
-        );
+        background: linear-gradient(135deg, #d0f4ff 0%, #a0e8ff 25%, #80dfff 50%, #a0e8ff 75%, #d0f4ff 100%);
         background-attachment: fixed;
         background-size: cover;
       }}
-
-      /* Hero Section */
       .hero-container {{
         background: linear-gradient(135deg, rgba(10,162,212,0.10), rgba(30,64,175,0.10));
         padding: 3rem;
@@ -39,15 +31,14 @@ st.markdown(f"""
         text-align: center;
         box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         max-width: 2200px;
-    
         margin: auto;
         border: 1px solid rgba(255,255,255,0.12);
         backdrop-filter: blur(6px);
-         margin-bottom: 2rem;
+        margin-bottom: 2rem;
       }}
       .hero-image {{
-        width: 60%;
-        max-width: 80px;
+        width: 100%;
+        max-width: 300px;
         height: auto;
         margin-bottom: 1.8rem;
         border-radius: 1rem;
@@ -69,8 +60,6 @@ st.markdown(f"""
         line-height: 1.8;
         padding: 0 1rem;
       }}
-
-      /* Nav Tabs Styling */
       .stTabs [data-baseweb="tab"] {{
         background-color: rgba(255, 255, 255, 0.2);
         border-radius: 0.75rem 0.75rem 0 0;
@@ -94,7 +83,6 @@ st.markdown(f"""
 header_image_path = os.path.join("static", "header_image.png")
 if os.path.exists(header_image_path):
     with open(header_image_path, "rb") as img_file:
-        import base64
         encoded_img = base64.b64encode(img_file.read()).decode()
     img_html = f"<img src='data:image/png;base64,{encoded_img}' class='hero-image' alt='MoodOS Banner'>"
 else:
@@ -112,7 +100,7 @@ st.markdown(f"""
     </div>
 """, unsafe_allow_html=True)
 
-tabs = st.tabs(["🎵 Upload Audio", "🎤 Record Mic", "📖 View Journal"])
+tabs = st.tabs(["🎵 Upload Audio", "🎤 Record Mic", "📖 View Journal", "💬 Chatbot"])
 
 with tabs[0]:
     st.markdown("### 🎵 Upload a WAV file to begin:")
@@ -172,4 +160,65 @@ with tabs[1]:
         save_to_journal(emotion, prediction)
 
 with tabs[2]:
-    show_journal()      
+    show_journal()
+
+with tabs[3]:
+    st.markdown("### 💬 Emotion-Aware Chatbot")
+
+    if "history" not in st.session_state:
+        st.session_state.history = []
+
+    def detect_emotion(text):
+        t = text.lower()
+        if any(w in t for w in ["sad", "unhappy", "lonely", "depressed"]):
+            return "Sad"
+        elif any(w in t for w in ["happy", "joy", "great", "excited"]):
+            return "Happy"
+        elif any(w in t for w in ["angry", "mad", "frustrated"]):
+            return "Angry"
+        return "Neutral"
+
+    import google.generativeai as genai
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])  
+
+    model_name = "gemini-1.5-flash"
+    model = genai.GenerativeModel(model_name)
+
+    def get_gemini_reply(user_text, emotion, history):
+        history_text = "\n".join([f"{m['role'].capitalize()}: {m['text']}" for m in history])
+        prompt = f"""
+        You are an empathetic AI assistant.
+        The user is currently feeling "{emotion}".
+        Respond in a tone that matches this emotion appropriately.
+        Use a conversational and human-like style.
+        
+        Conversation so far:
+        {history_text}
+
+        User: {user_text}
+        Bot:
+        """
+        response = model.generate_content(prompt)
+        return response.text.strip()
+
+    user_msg = st.text_input("You:", key="chat_input")
+    if user_msg:
+        emo = detect_emotion(user_msg)
+        bot_msg = get_gemini_reply(user_msg, emo, st.session_state.history)
+        st.session_state.history.append({"role": "user", "text": user_msg, "emotion": emo})
+        st.session_state.history.append({"role": "bot", "text": bot_msg, "emotion": emo})
+
+    for msg in st.session_state.history:
+        if msg["role"] == "user":
+            st.markdown(f"**You:** {msg['text']}")
+        else:
+            st.markdown(f"**Bot:** {msg['text']}")
+
+    if st.session_state.history:
+        emos = [m["emotion"] for m in st.session_state.history if m["role"] == "user"]
+        counts = {e: emos.count(e) for e in set(emos)}
+        fig, ax = plt.subplots()
+        ax.bar(counts.keys(), counts.values(), color=['skyblue', 'lightgreen', 'salmon', 'gray'])
+        ax.set_ylabel("Frequency")
+        ax.set_title("Detected Emotions in Conversation")
+        st.pyplot(fig)
