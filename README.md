@@ -15,6 +15,7 @@ Unlike traditional NLP-based sentiment models, **MoodOS is sentence-agnostic** �
 - **Mood Journal to track your emotional patterns**
 - **Personalized suggestions based on detected emotion**
 - **Clean UI with waveform and probability visualizations**
+- **Emotion-aware chatbot with conversation memory, Gemini-powered tone adaptation, and visual insights.**
 
 ---
 
@@ -33,11 +34,19 @@ It detects the following emotions:
 
 > `Happy, Sad, Angry, Fearful, Neutral, Disgust`
 
+Then the system not only visualizes prediction probabilities with dynamic charts but also offers personalized suggestions—like uplifting activities or calming techniques—tailored to the user’s current mood. 
+
+All interactions are securely logged into a built-in mood journal, enabling users to track emotional patterns over time.
+
+There's also a chatbot that keeps conversation memory using st.session_state so it remembers previous interactions in the ongoing chat and understands emotional tone from the conversation history and adapts its replies (e.g., more compassionate if sadness is detected).
+
 ---
 
 ## Live Demo
 
 > Find here : https://trackyourmood.onrender.com  (wait for few minutes to load)
+> Demo video : https://drive.google.com/file/d/1ow1KIWIiqMHQIy5jEuyA1xRvyxLcmsvJ/view?usp=sharing
+
 --- 
 
 ## Why Use MoodOS?
@@ -78,11 +87,11 @@ Developed by [Vennela Varshini Anasoori](https://github.com/vennelavarshini18)
 
 MoodOS is evolving with the following goals in mind:
 
--  **Integration with an emotional AI chatbot**
+-  **More user friendly journal section**
 -  **Continual learning from user feedback**
 -  **Enhanced visualizations and UX improvements**
 -  **Longitudinal analysis of mood patterns**
--  **Cloud storage & analytics for enterprise use**
+-  **Database integration and authentication**
 
 ---
 
